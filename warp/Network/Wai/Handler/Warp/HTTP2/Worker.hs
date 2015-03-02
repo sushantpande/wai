@@ -17,8 +17,8 @@ data Break = Break deriving (Show, Typeable)
 
 instance Exception Break
 
--- Confirmed that this logic does not leak space.
 -- fixme: tickle activity
+-- fixme: sending a reset frame?
 worker :: Context -> Application -> EnqRsp -> IO ()
 worker Context{..} app enQResponse = go `E.catch` gonext
   where
