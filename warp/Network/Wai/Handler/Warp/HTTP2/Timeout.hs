@@ -23,14 +23,14 @@ initialize timeout = mkReaper defaultReaperSettings
 
 clean :: IntMap Stream -> IO (IntMap Stream -> IntMap Stream)
 clean old = do
-    let (inactive, active) = partition activeOrNot old
+    let (inactive, active) = partition stacked old
     F.mapM_ gonext inactive
     F.mapM_ inactivate active
     return $ union active
   where
-    activeOrNot Stream{..} = unsafePerformIO $ do
+    stacked Stream{..} = unsafePerformIO $ do
         x <- readIORef streamActivity
-        return $ x == Active
+        return $ x == Inactive
     gonext Stream{..} = do
         act <- readIORef streamTimeoutAction
         act
