@@ -12,7 +12,7 @@ import Data.IntMap.Strict as M
 import Network.Wai.Handler.Warp.HTTP2.Types
 import System.IO.Unsafe
 
-initialize :: Int -> IO (Reaper (IntMap Stream) (Int, Stream))
+initialize :: Int -> IO StreamTable
 initialize timeout = mkReaper defaultReaperSettings
     { reaperAction = clean
     , reaperDelay = timeout
@@ -36,7 +36,7 @@ clean old = do
         act
     inactivate Stream{..} = writeIORef streamActivity Inactive
 
-withTimer :: Int -> IO a -> IO a
+withTimer :: Int -> (StreamTable -> IO a) -> IO a
 withTimer timeout action = E.bracket (initialize timeout)
                                      reaperStop
-                                     (\_ -> action)
+                                     action

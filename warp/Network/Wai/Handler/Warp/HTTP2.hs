@@ -29,8 +29,8 @@ http2 :: Connection -> InternalInfo -> SockAddr -> Transport -> S.Settings -> So
 http2 conn ii addr transport settings src app = do
     checkTLS
     ok <- checkPreface
-    when ok $ withTimer 10000000 $ do -- fixme: hard-coding
-        ctx <- newContext
+    when ok $ withTimer 10000000 $ \strmtbl -> do -- fixme: hard-coding
+        ctx <- newContext strmtbl
         let enQResponse = enqueueRsp ctx ii settings
             mkreq = mkRequest settings addr
         tid <- forkIO $ frameReceiver ctx mkreq src
