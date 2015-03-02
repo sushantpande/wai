@@ -45,7 +45,7 @@ http2 conn ii addr transport settings src app = do
         frameSender conn ii ctx `E.finally` mapM_ killThread (tid:tids)
   where
     checkTLS = case transport of
-        TCP -> goaway conn InadequateSecurity "Weak TLS"
+        TCP -> return () -- direct
         tls -> unless (tls12orLater tls) $ goaway conn InadequateSecurity "Weak TLS"
     tls12orLater tls = tlsMajorVersion tls == 3 && tlsMinorVersion tls >= 3
     checkPreface = do
