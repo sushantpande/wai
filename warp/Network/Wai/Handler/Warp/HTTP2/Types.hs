@@ -83,7 +83,7 @@ instance Show StreamState where
 
 ----------------------------------------------------------------
 
-data Activity = Active | Inactive
+data Activity = Active | Inactive deriving (Eq,Show)
 
 data Stream = Stream {
     streamNumber        :: Int

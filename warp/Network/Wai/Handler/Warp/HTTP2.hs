@@ -17,6 +17,7 @@ import Network.Wai.Handler.Warp.HTTP2.Receiver
 import Network.Wai.Handler.Warp.HTTP2.Request
 import Network.Wai.Handler.Warp.HTTP2.Response
 import Network.Wai.Handler.Warp.HTTP2.Sender
+import Network.Wai.Handler.Warp.HTTP2.Timeout
 import Network.Wai.Handler.Warp.HTTP2.Types
 import Network.Wai.Handler.Warp.HTTP2.Worker
 import qualified Network.Wai.Handler.Warp.Settings as S (Settings)
@@ -28,7 +29,7 @@ http2 :: Connection -> InternalInfo -> SockAddr -> Transport -> S.Settings -> So
 http2 conn ii addr transport settings src app = do
     checkTLS
     ok <- checkPreface
-    when ok $ do
+    when ok $ withTimer 10000000 $ do -- fixme: hard-coding
         ctx <- newContext
         let enQResponse = enqueueRsp ctx ii settings
             mkreq = mkRequest settings addr
